@@ -58,6 +58,7 @@ const ContactForm = (props) => {
         name="type"
         value="personal"
         defaultChecked={type === "personal"}
+        onChange={onChange}
       />{" "}
       Personal{" "}
       <input
@@ -65,6 +66,7 @@ const ContactForm = (props) => {
         name="type"
         value="professional"
         defaultChecked={type === "professional"}
+        onChange={onChange}
       />
       Professional
       <div>
