@@ -126,14 +126,8 @@ const mapDispatchToProps = (dispatch) => {
     updateContact: (contact) => {
       dispatch({ type: "UPDATE_CONTACT", payload: contact });
     },
-    filterContact: (text) => {
-      dispatch({ type: "FILTER_CONTACT", payload: text });
-    },
     clearCurrent: () => {
       dispatch({ type: "CLEAR_CURRENT_CONTACT" });
-    },
-    clearFilter: () => {
-      dispatch({ type: "CLEAR_FILTER" });
     },
   };
 };
