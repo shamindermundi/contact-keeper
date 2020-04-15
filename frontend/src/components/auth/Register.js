@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { connect } from "react-redux";
+import { v4 as uuidv4 } from "uuid";
 
-const Register = () => {
+const Register = ({ setAlert }) => {
   const [user, setUser] = useState({
     name: "",
     email: "",
@@ -14,7 +16,13 @@ const Register = () => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    console.log("Restered");
+    if (name === "" || email === "" || password === "") {
+      setAlert("Please enter all feilds.");
+    } else if (password !== password2) {
+      setAlert("Passwords do not match.");
+    } else {
+      console.log("Restered");
+    }
   };
 
   return (
@@ -38,6 +46,7 @@ const Register = () => {
             name="password"
             value={password}
             onChange={onChange}
+            minLength="6"
           />
         </div>
         <div className="form-group">
@@ -59,4 +68,22 @@ const Register = () => {
   );
 };
 
-export default Register;
+const mapStateToProps = (state) => {
+  return {
+    alert: state.alert,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setAlert: (msg, type, timeout = 7000) => {
+      dispatch({ type: "SET_ALERT", payload: [msg] });
+
+      setTimeout(() => dispatch({ type: "REMOVE_ALERT" }), timeout);
+    },
+  };
+};
+
+const RegisterReducer = connect(mapStateToProps, mapDispatchToProps)(Register);
+
+export default RegisterReducer;

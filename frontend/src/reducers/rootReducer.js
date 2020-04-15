@@ -6,12 +6,16 @@ const initialState = {
   isAuthenticated: null,
   loading: false,
   error: null,
+  alerts: [],
 };
 
 const rootReducer = (state = initialState, action) => {
   console.log("redux store", state);
 
   switch (action.type) {
+    /**
+     * Contact add , delete ,update
+     */
     case "ADD_CONTACT":
       return { ...state, contacts: [...state.contacts, action.payload] };
 
@@ -58,6 +62,15 @@ const rootReducer = (state = initialState, action) => {
         filtered: null,
       };
 
+    /**
+     * Alert set and remove
+     */
+
+    case "SET_ALERT":
+      return { ...state, alerts: action.payload };
+
+    case "REMOVE_ALERT":
+      return { ...state, alerts: [] };
     default:
       return state;
   }
