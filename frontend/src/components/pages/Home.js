@@ -1,12 +1,13 @@
 import React from "react";
 import { connect } from "react-redux";
 import Contacts from "../contacts/Contacts";
+import ContactForm from "../contacts/ContactForm";
 
 const Home = (props) => {
   return (
     <div className="grid-2">
       <div>
-        <h1>home</h1>
+        <ContactForm />
       </div>
       <div>
         <Contacts />

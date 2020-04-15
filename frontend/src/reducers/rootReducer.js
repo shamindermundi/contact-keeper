@@ -27,6 +27,15 @@ const initialState = {
 
 const rootReducer = (state = initialState, action) => {
   //Add contact
+  console.log("redux store", state);
+  switch (action.type) {
+    case "ADD_CONTACT":
+      return { ...state, contacts: [...state.contacts, action.payload] };
+      break;
+
+    default:
+      return state;
+  }
 
   //Delete contact
 
@@ -39,8 +48,6 @@ const rootReducer = (state = initialState, action) => {
   //Filter contact
 
   //Clear contact
-
-  return state;
 };
 
 export default rootReducer;
