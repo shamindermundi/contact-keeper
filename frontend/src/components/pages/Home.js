@@ -1,11 +1,26 @@
 import React from "react";
+import { connect } from "react-redux";
+import Contacts from "../contacts/Contacts";
 
-const Home = () => {
+const Home = (props) => {
   return (
-    <div>
-      <h1>home</h1>
+    <div className="grid-2">
+      <div>
+        <h1>home</h1>
+      </div>
+      <div>
+        <Contacts />
+      </div>
     </div>
   );
 };
 
-export default Home;
+const mapStateToProps = (state) => {
+  return {
+    loading: state.loading,
+  };
+};
+
+const HomeReducer = connect(mapStateToProps)(Home);
+
+export default HomeReducer;
