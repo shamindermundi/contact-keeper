@@ -1,8 +1,14 @@
 import React from "react";
+import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
-const ContactItem = ({ contact }) => {
+const ContactItem = ({ contact, deleteContact }) => {
   const { id, name, email, phone, type } = contact;
+
+  const onDelete = () => {
+    deleteContact(id);
+  };
+
   return (
     <div className="card bg-light">
       <h3 className="text-primary text-left">
@@ -24,7 +30,9 @@ const ContactItem = ({ contact }) => {
       </ul>
       <p>
         <button className="btn btn-dark btn-sm">Edit</button>
-        <button className="btn btn-danger btn-sm">Delete </button>
+        <button className="btn btn-danger btn-sm" onClick={onDelete}>
+          Delete{" "}
+        </button>
       </p>
     </div>
   );
@@ -34,4 +42,14 @@ ContactItem.propTypes = {
   contact: PropTypes.object.isRequired,
 };
 
-export default ContactItem;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    deleteContact: (id) => {
+      dispatch({ type: "DELETE_CONTACT", payload: id });
+    },
+  };
+};
+
+const ContactItemReducer = connect(null, mapDispatchToProps)(ContactItem);
+
+export default ContactItemReducer;

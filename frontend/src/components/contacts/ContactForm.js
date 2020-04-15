@@ -80,12 +80,6 @@ const ContactForm = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    loading: state.loading,
-  };
-};
-
 const mapDispatchToProps = (dispatch) => {
   return {
     addContact: (contact) => {
@@ -94,9 +88,6 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-const ContactFormReducer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ContactForm);
+const ContactFormReducer = connect(null, mapDispatchToProps)(ContactForm);
 
 export default ContactFormReducer;
