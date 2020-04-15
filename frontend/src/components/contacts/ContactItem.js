@@ -18,9 +18,9 @@ const ContactItem = ({ contact }) => {
         </span>
       </h3>
       <ul>
-        {email && <li className="fas fa-envelope-open">{email}</li>}
+        {email && <li className="fas fa-envelope-open"> {email}</li>}
         <br />
-        {phone && <li className="fas fa-phone">{phone}</li>}
+        {phone && <li className="fas fa-phone"> {phone}</li>}
       </ul>
       <p>
         <button className="btn btn-dark btn-sm">Edit</button>
