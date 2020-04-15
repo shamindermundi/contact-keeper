@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import Contacts from "../contacts/Contacts";
 import ContactForm from "../contacts/ContactForm";
+import ContactFilterReducer from "../contacts/ContactFilter";
 
 const Home = (props) => {
   return (
@@ -10,6 +11,7 @@ const Home = (props) => {
         <ContactForm />
       </div>
       <div>
+        <ContactFilterReducer />
         <Contacts />
       </div>
     </div>
