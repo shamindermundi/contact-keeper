@@ -2,11 +2,12 @@ import React from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
-const ContactItem = ({ contact, deleteContact }) => {
+const ContactItem = ({ contact, deleteContact, setCurrent, clearCurrent }) => {
   const { id, name, email, phone, type } = contact;
 
   const onDelete = () => {
     deleteContact(id);
+    clearCurrent();
   };
 
   return (
@@ -29,7 +30,12 @@ const ContactItem = ({ contact, deleteContact }) => {
         {phone && <li className="fas fa-phone"> {phone}</li>}
       </ul>
       <p>
-        <button className="btn btn-dark btn-sm">Edit</button>
+        <button
+          className="btn btn-dark btn-sm"
+          onClick={() => setCurrent(contact)}
+        >
+          Edit
+        </button>
         <button className="btn btn-danger btn-sm" onClick={onDelete}>
           Delete{" "}
         </button>
@@ -40,6 +46,15 @@ const ContactItem = ({ contact, deleteContact }) => {
 
 ContactItem.propTypes = {
   contact: PropTypes.object.isRequired,
+  onDelete: PropTypes.func,
+  setCurrent: PropTypes.func,
+  clearCurrent: PropTypes.func,
+};
+
+const mapStateToProps = (state) => {
+  return {
+    loading: state.loading,
+  };
 };
 
 const mapDispatchToProps = (dispatch) => {
@@ -47,9 +62,18 @@ const mapDispatchToProps = (dispatch) => {
     deleteContact: (id) => {
       dispatch({ type: "DELETE_CONTACT", payload: id });
     },
+    setCurrent: (contact) => {
+      dispatch({ type: "SET_CURRENT_CONTACT", payload: contact });
+    },
+    clearCurrent: () => {
+      dispatch({ type: "CLEAR_CURRENT_CONTACT" });
+    },
   };
 };
 
-const ContactItemReducer = connect(null, mapDispatchToProps)(ContactItem);
+const ContactItemReducer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ContactItem);
 
 export default ContactItemReducer;

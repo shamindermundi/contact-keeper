@@ -1,8 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
 
-const ContactForm = (props) => {
+const ContactForm = ({
+  addContact,
+  currentContact,
+  clearCurrent,
+  updateContact,
+}) => {
+  useEffect(() => {
+    if (currentContact !== null) {
+      setContact(currentContact);
+    } else {
+      setContact({
+        name: "",
+        email: "",
+        phone: "",
+        type: "personal",
+      });
+    }
+  }, [currentContact]);
+
   const [contact, setContact] = useState({
     name: "",
     email: "",
@@ -17,9 +35,16 @@ const ContactForm = (props) => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    let contactDetails = contact;
-    contactDetails = { ...contact, id: uuidv4() };
-    props.addContact(contactDetails);
+    console.log("currentContact is \n", currentContact);
+    if (currentContact === null) {
+      let contactDetails = contact;
+      contactDetails = { ...contact, id: uuidv4() };
+      addContact(contactDetails);
+    } else {
+      updateContact(contact);
+      clearCurrent();
+    }
+
     setContact({
       name: "",
       email: "",
@@ -30,7 +55,9 @@ const ContactForm = (props) => {
 
   return (
     <form onSubmit={onSubmit}>
-      <h2 className="text-primary">Add Contact</h2>
+      <h2 className="text-primary">
+        {currentContact ? "Edit Contact" : "Add Contact"}
+      </h2>
       <input
         type="text"
         name="name"
@@ -56,28 +83,39 @@ const ContactForm = (props) => {
       <input
         type="radio"
         name="type"
-        value="personal"
-        defaultChecked={type === "personal"}
+        value={type}
+        checked={type === "personal"}
         onChange={onChange}
       />{" "}
       Personal{" "}
       <input
         type="radio"
         name="type"
-        value="professional"
-        defaultChecked={type === "professional"}
+        value={type}
+        checked={type === "professional"}
         onChange={onChange}
       />
       Professional
       <div>
         <input
           type="submit"
-          value="Add Contact"
+          value={currentContact ? "Update Contact" : "Add Contact"}
           className="btn btn-primary btn-block"
         />
       </div>
+      {currentContact && (
+        <div onClick={() => clearCurrent()}>
+          <button className="btn btn-light btn-block">Clear</button>
+        </div>
+      )}
     </form>
   );
+};
+
+const mapStateToProps = (state) => {
+  return {
+    currentContact: state.currentContact,
+  };
 };
 
 const mapDispatchToProps = (dispatch) => {
@@ -85,9 +123,24 @@ const mapDispatchToProps = (dispatch) => {
     addContact: (contact) => {
       dispatch({ type: "ADD_CONTACT", payload: contact });
     },
+    updateContact: (contact) => {
+      dispatch({ type: "UPDATE_CONTACT", payload: contact });
+    },
+    filterContact: (text) => {
+      dispatch({ type: "FILTER_CONTACT", payload: text });
+    },
+    clearCurrent: () => {
+      dispatch({ type: "CLEAR_CURRENT_CONTACT" });
+    },
+    clearFilter: () => {
+      dispatch({ type: "CLEAR_FILTER" });
+    },
   };
 };
 
-const ContactFormReducer = connect(null, mapDispatchToProps)(ContactForm);
+const ContactFormReducer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ContactForm);
 
 export default ContactFormReducer;
