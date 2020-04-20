@@ -3,10 +3,11 @@ const initialState = {
   currentContact: null,
   filtered: null,
   token: localStorage.getItem("token"),
-  isAuthenticated: null,
+  isAuthenticated: false,
   loading: false,
   error: null,
   alerts: [],
+  user: null,
 };
 
 const rootReducer = (state = initialState, action) => {
@@ -71,6 +72,62 @@ const rootReducer = (state = initialState, action) => {
 
     case "REMOVE_ALERT":
       return { ...state, alerts: [] };
+
+    /**
+     * Users login & register
+     */
+
+    case "REGISTER_USER":
+    case "LOGIN_USER":
+      localStorage.setItem("token", action.payload.token);
+      return {
+        ...state,
+        token: action.payload,
+        isAuthenticated: true,
+        error: null,
+        alerts: [],
+      };
+
+    case "REGISTER_FAILED":
+    case "AUTH_ERROR":
+      localStorage.removeItem("token");
+      return {
+        ...state,
+        token: null,
+        alerts: ["Registation falied!! "],
+        isAuthenticated: false,
+        user: null,
+        error: action.payload,
+      };
+
+    case "LOAD_USER":
+      return {
+        ...state,
+        isAuthenticated: true,
+        user: action.payload,
+      };
+
+    case "LOGIN_FAILED":
+      localStorage.removeItem("token");
+      return {
+        ...state,
+        token: null,
+        alerts: ["Login failed!! "],
+        isAuthenticated: false,
+        user: null,
+        error: action.payload,
+      };
+
+    case "LOGOUT_USER":
+      localStorage.removeItem("token");
+      return {
+        ...state,
+        token: null,
+        alerts: ["Logout complete! "],
+        isAuthenticated: false,
+        user: null,
+      };
+
     default:
       return state;
   }

@@ -1,8 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { v4 as uuidv4 } from "uuid";
+import axios from "axios";
 
-const Register = ({ setAlert }) => {
+const Register = ({
+  setAlert,
+  registerFailed,
+  registerUser,
+  isAuthenticated,
+  history,
+}) => {
+  useEffect(() => {
+    if (isAuthenticated) {
+      history.push("/");
+    }
+    //eslint-disable-next-line
+  }, [isAuthenticated, history]);
+
   const [user, setUser] = useState({
     name: "",
     email: "",
@@ -14,14 +27,29 @@ const Register = ({ setAlert }) => {
 
   const onChange = (e) => setUser({ ...user, [e.target.name]: e.target.value });
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     if (name === "" || email === "" || password === "") {
-      setAlert("Please enter all feilds.");
+      setAlert("Please enter all fields.");
     } else if (password !== password2) {
       setAlert("Passwords do not match.");
     } else {
-      console.log("Restered");
+      console.log("register called");
+      const config = {
+        headers: {
+          "Contant-Type": "application/json",
+        },
+      };
+
+      try {
+        const res = await axios.post("/api/users", user, config);
+
+        // res.data is token returned from backend
+        await registerUser(res.data);
+        history.push("/");
+      } catch (err) {
+        registerFailed(err.response.data.msg);
+      }
     }
   };
 
@@ -70,16 +98,23 @@ const Register = ({ setAlert }) => {
 
 const mapStateToProps = (state) => {
   return {
-    alert: state.alert,
+    alerts: state.alerts,
+    isAuthenticated: state.isAuthenticated,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setAlert: (msg, type, timeout = 7000) => {
+    setAlert: (msg, timeout = 5000) => {
       dispatch({ type: "SET_ALERT", payload: [msg] });
 
       setTimeout(() => dispatch({ type: "REMOVE_ALERT" }), timeout);
+    },
+    registerUser: (token) => {
+      dispatch({ type: "REGISTER_USER", payload: token });
+    },
+    registerFailed: (err) => {
+      dispatch({ type: "REGISTER_FAILED", payload: err });
     },
   };
 };

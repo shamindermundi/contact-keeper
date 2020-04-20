@@ -1,8 +1,13 @@
 import React from "react";
+import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
-const Navbar = ({ title, icon }) => {
+const Navbar = ({ title, icon, isAuthenticated, logout }) => {
+  const userLogout = () => {
+    localStorage.removeItem("token");
+    logout();
+  };
   return (
     <div className="navbar bg-primary">
       <h1>
@@ -18,9 +23,15 @@ const Navbar = ({ title, icon }) => {
         <li>
           <Link to="/register">Register</Link>
         </li>
-        <li>
-          <Link to="/login">Login</Link>
-        </li>
+        {isAuthenticated ? (
+          <li onClick={() => userLogout()} style={{ cursor: "pointer" }}>
+            Logout
+          </li>
+        ) : (
+          <li>
+            <Link to="/login">Login</Link>
+          </li>
+        )}
       </ul>
     </div>
   );
@@ -36,4 +47,22 @@ Navbar.defaultProps = {
   icon: "fas fa-id-card-alt",
 };
 
-export default Navbar;
+const mapStateToProps = (state) => {
+  return {
+    isAuthenticated: state.isAuthenticated,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    logout: () => {
+      dispatch({ type: "LOGOUT_USER" });
+
+      setTimeout(() => dispatch({ type: "REMOVE_ALERT" }), 3000);
+    },
+  };
+};
+
+const NavbarWithData = connect(mapStateToProps, mapDispatchToProps)(Navbar);
+
+export default NavbarWithData;

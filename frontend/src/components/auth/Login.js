@@ -1,6 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { connect } from "react-redux";
+import axios from "axios";
 
-const Login = () => {
+const Login = ({
+  setAlert,
+  loginFailed,
+  loginUser,
+  isAuthenticated,
+  history,
+}) => {
+  useEffect(() => {
+    if (isAuthenticated) {
+      history.push("/");
+    }
+    //eslint-disable-next-line
+  }, [isAuthenticated, history]);
   const [user, setUser] = useState({
     email: "",
     password: "",
@@ -10,9 +24,27 @@ const Login = () => {
 
   const onChange = (e) => setUser({ ...user, [e.target.name]: e.target.value });
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
-    console.log("Logged IN");
+    if (email === "" || password === "") {
+      setAlert("Please enter all feilds.");
+    } else {
+      const config = {
+        headers: {
+          "Contant-Type": "application/json",
+        },
+      };
+
+      try {
+        const res = await axios.post("/api/auth", user, config);
+
+        // res.data is token returned from backend
+        loginUser(res.data);
+        history.push("/");
+      } catch (err) {
+        loginFailed(err.response.data.msg);
+      }
+    }
   };
 
   return (
@@ -45,4 +77,29 @@ const Login = () => {
   );
 };
 
-export default Login;
+const mapStateToProps = (state) => {
+  return {
+    alerts: state.alerts,
+    isAuthenticated: state.isAuthenticated,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setAlert: (msg, timeout = 5000) => {
+      dispatch({ type: "SET_ALERT", payload: [msg] });
+
+      setTimeout(() => dispatch({ type: "REMOVE_ALERT" }), timeout);
+    },
+    loginUser: (token) => {
+      dispatch({ type: "LOGIN_USER", payload: token });
+    },
+    loginFailed: (err) => {
+      dispatch({ type: "LOGIN_FAILED", payload: err });
+    },
+  };
+};
+
+const LoginWithData = connect(mapStateToProps, mapDispatchToProps)(Login);
+
+export default LoginWithData;

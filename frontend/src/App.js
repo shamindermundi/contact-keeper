@@ -1,4 +1,5 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
+import { connect } from "react-redux";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import "./App.css";
@@ -8,8 +9,13 @@ import About from "./components/pages/About";
 import Register from "./components/auth/Register";
 import Login from "./components/auth/Login";
 import Alert from "./components/layout/Alert";
+import getUserWithData from "./utils/setAuthToken";
 
-const App = () => {
+const App = ({ loadUser, authError }) => {
+  useEffect(() => {
+    getUserWithData({ loadUser, authError });
+    //eslint-disable-next-line
+  }, []);
   return (
     <Router>
       <Fragment>
@@ -27,5 +33,13 @@ const App = () => {
     </Router>
   );
 };
+const mapDispatchToProps = (dispatch) => {
+  return {
+    loadUser: (user) => dispatch({ type: "LOAD_USER", payload: user }),
+    authError: () => dispatch({ type: "AUTH_ERROR" }),
+  };
+};
 
-export default App;
+const AppWithData = connect(null, mapDispatchToProps)(App);
+
+export default AppWithData;
